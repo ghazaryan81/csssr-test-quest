@@ -1,0 +1,228 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.targetBlank = exports.changeChacked = exports.defaultChecked = exports.AutoResize = exports.addId = exports.clearText = exports.clearAltTitle = undefined;
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var linkAutoHeight = function linkAutoHeight(textareaElem, preElem, spanElem) {
+	spanElem.innerHTML = textareaElem.value + ' ';
+	var getHeight = textareaElem.getAttribute('data-height');
+	if (textareaElem.getAttribute('data-default-height')) {
+		getHeight = textareaElem.getAttribute('data-default-height');
+	}
+	if (textareaElem.scrollHeight <= getHeight) {
+		textareaElem.style.height = getHeight + 'px';
+	} else {
+		textareaElem.style.height = preElem.scrollHeight + 'px';
+	}
+};
+
+var AutoResize = function () {
+	function AutoResize(profileContainer, profileRow, profilePre, profileSpan) {
+		(0, _classCallCheck3.default)(this, AutoResize);
+
+		this.profile = document.querySelector('.' + profileContainer);
+		this.textarea = this.profile.querySelectorAll('textarea');
+		this.row = this.profile.querySelectorAll('.' + profileRow);
+		this.preClassName = profilePre.split('js-')[1];
+		this.spanClassName = profileSpan.split('js-')[1];
+	}
+
+	(0, _createClass3.default)(AutoResize, [{
+		key: 'createPre',
+		value: function createPre() {
+			var textarea = this.textarea;
+			var row = this.row;
+			var preClassName = this.preClassName;
+			var spanClassName = this.spanClassName;
+			for (var i = textarea.length; i--; i === 0) {
+				var pre = document.createElement('pre');
+				var span = document.createElement('span');
+				pre.className = preClassName;
+				span.className = spanClassName;
+				pre.appendChild(span);
+				row[i].insertBefore(pre, null);
+			}
+		} // end createPre
+
+	}, {
+		key: 'eventsTextarea',
+		value: function eventsTextarea() {
+			var textarea = this.textarea;
+			var preEl = document.querySelectorAll('.' + this.preClassName);
+			var spanEl = document.querySelectorAll('.' + this.spanClassName);
+			var eventsList = ['input', 'propertychange', 'keyup', 'change', 'keydown', 'keypress'];
+
+			var _loop = function _loop(i) {
+				for (var j = eventsList.length; j--; j === 0) {
+					textarea[i].addEventListener(eventsList[j], function () {
+						linkAutoHeight(textarea[i], preEl[i], spanEl[i]);
+					});
+				}
+			};
+
+			for (var i = textarea.length; i--; i === 0) {
+				_loop(i);
+			}
+		} // end eventsTextarea
+
+	}, {
+		key: 'defaultHeightTextarea',
+		value: function defaultHeightTextarea() {
+			var textarea = this.textarea;
+			var dataHeight = void 0;
+			for (var i = textarea.length; i--; i === 0) {
+				dataHeight = textarea[i].scrollHeight;
+				textarea[i].setAttribute('data-height', dataHeight);
+			}
+		} // end defaultHeightTextarea
+
+		// copy content from textarea and paste to span in pre
+
+	}, {
+		key: 'copyToPre',
+		value: function copyToPre() {
+			var pre = this.profile.querySelectorAll('.' + this.preClassName);
+			var textarea = this.textarea;
+			for (var i = pre.length; i--; i === 0) {
+				pre[i].querySelector('span').innerHTML = textarea[i].innerHTML;
+			}
+		} // copyToPre
+
+	}, {
+		key: 'autoHeight',
+		value: function autoHeight(i) {
+			var textareaElem = this.textarea[i];
+			var preElem = this.row[i].querySelector('.' + this.preClassName);
+			var spanElem = this.row[i].querySelector('.' + this.spanClassName);
+			setTimeout(function () {
+				linkAutoHeight(textareaElem, preElem, spanElem);
+			});
+		} // autoHeight
+
+	}]);
+	return AutoResize;
+}(); // end class AutoResize
+
+var targetBlank = function targetBlank(className) {
+	var targetBlankElements = document.querySelectorAll(className);
+	for (var i = targetBlankElements.length; i--; i === 0) {
+		targetBlankElements[i].setAttribute('target', '_blank');
+	}
+};
+
+var clearAltTitle = function clearAltTitle(className) {
+	var htaElem = document.querySelectorAll(className);
+	var title = 'title';
+	var alt = 'alt';
+
+	var _loop2 = function _loop2(i) {
+		htaElem[i].addEventListener('mouseover', function () {
+			if (htaElem[i].hasAttribute(title)) {
+				htaElem[i].setAttribute('data-' + title, htaElem[i].getAttribute(title));
+				htaElem[i].removeAttribute(title);
+			}
+			if (htaElem[i].hasAttribute(alt)) {
+				htaElem[i].setAttribute('data-' + alt, htaElem[i].getAttribute(alt));
+				htaElem[i].removeAttribute(alt);
+			}
+		});
+		htaElem[i].addEventListener('mouseout', function () {
+			if (htaElem[i].hasAttribute('data-' + title)) {
+				htaElem[i].setAttribute(title, htaElem[i].getAttribute('data-' + title));
+				htaElem[i].removeAttribute('data-' + title);
+			}
+			if (htaElem[i].hasAttribute('data-' + alt)) {
+				htaElem[i].setAttribute(alt, htaElem[i].getAttribute('data-' + alt));
+				htaElem[i].removeAttribute('data-' + alt);
+			}
+		});
+	};
+
+	for (var i = htaElem.length; i--; i === 0) {
+		_loop2(i);
+	}
+};
+
+var defaultChecked = function defaultChecked(className, parentElement, addClassName) {
+	var checksParent = document.querySelectorAll(parentElement);
+	var checks = document.querySelectorAll(className);
+	for (var i = checks.length; i--; i === 0) {
+		if (checks[i].hasAttribute('checked')) {
+			checksParent[i].className = checksParent[i].className + ' ' + addClassName;
+		}
+	}
+};
+
+var removeCheckedRadioDecor = function removeCheckedRadioDecor() {
+	var radioElements = document.querySelectorAll('.js-radio');
+	for (var i = 0; i < radioElements.length; i++) {
+		if (radioElements[i].querySelector('.js-radio__input').checked) {
+			radioElements[i].className = 'radio js-radio selected';
+		} else {
+			radioElements[i].className = 'radio js-radio';
+		}
+	}
+};
+
+var changeChacked = function changeChacked(className, parentElement, addClassName) {
+	var checksParent = document.querySelectorAll(parentElement);
+	var checkList = document.querySelectorAll(className);
+
+	var _loop3 = function _loop3(i) {
+		checkList[i].addEventListener('change', function () {
+			if (checkList[i].checked) {
+				if (checkList[i].getAttribute('type') === 'radio') {
+					removeCheckedRadioDecor();
+				}
+				checksParent[i].className = checksParent[i].className + ' ' + addClassName;
+			} else {
+				checksParent[i].className = checksParent[i].className.split(' ')[0];
+			}
+		});
+	};
+
+	for (var i = 0; i < checkList.length; i++) {
+		_loop3(i);
+	}
+};
+
+var clearText = function clearText(selector) {
+	var allText = document.querySelectorAll(selector);
+	for (var i = allText.length; i--; i === 0) {
+		var txt = allText[i].value;
+		txt = txt.replace(/(\r\n|\n|\r)/gm, ' ');
+		allText[i].value = txt.replace(/\s+/g, ' ');
+	}
+};
+
+var addId = function addId(labelSelctor, inputSelector, idName) {
+	var label = document.querySelectorAll(labelSelctor);
+	var input = document.querySelectorAll(inputSelector);
+	for (var i = input.length; i--; i === 0) {
+		label[i].setAttribute('for', idName + '-' + i);
+		input[i].setAttribute('id', idName + '-' + i);
+	}
+};
+
+removeCheckedRadioDecor();
+
+// export {targetBlank, clearAltTitle, defaultChecked, changeChacked, clearText, AutoResize, addId};
+exports.clearAltTitle = clearAltTitle;
+exports.clearText = clearText;
+exports.addId = addId;
+exports.AutoResize = AutoResize;
+exports.defaultChecked = defaultChecked;
+exports.changeChacked = changeChacked;
+exports.targetBlank = targetBlank;

@@ -1,0 +1,193 @@
+// ==UserScript==
+// @name        NULL Opener object
+// @namespace   nullopenerobjectns
+// @description Clears the window.openeer object.
+// @version     1
+// @grant       none
+// @run-at      document-start
+// ==/UserScript==
+'use strict';
+
+var _svg4everybody = require('svg4everybody');
+
+var _svg4everybody2 = _interopRequireDefault(_svg4everybody);
+
+var _jquery = require('jquery');
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _functions = require('./functions');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+window.opener = null;
+
+(0, _functions.targetBlank)('.g-js-tb');
+(0, _functions.clearAltTitle)('.g-js-hta');
+(0, _functions.addId)('.js-profile-label', '.js-profile-textarea', 'textarea');
+(0, _functions.addId)('.js-checkbox__label', '.js-checkbox__input', 'checkbox');
+(0, _functions.addId)('.js-radio__label', '.js-radio__input', 'radio');
+(0, _functions.clearText)('textarea');
+(0, _functions.defaultChecked)('.js-checkbox__input', '.js-checkbox', 'selected');
+(0, _functions.changeChacked)('.js-checkbox__input', '.js-checkbox', 'selected');
+(0, _functions.changeChacked)('.js-radio__input', '.js-radio', 'selected');
+
+var profile = new _functions.AutoResize('js-profile', 'js-profile-row', 'js-profile-row__pre', 'js-span', 0);
+profile.createPre();
+profile.eventsTextarea();
+profile.defaultHeightTextarea();
+profile.copyToPre();
+
+var startAutoHeight = function startAutoHeight() {
+	for (var i = profile.textarea.length; i--; i === 0) {
+		profile.autoHeight(i);
+	}
+};
+
+// about me
+var about = new _functions.AutoResize('js-about-me', 'js-about-me-row', 'js-about-me-row__pre', 'js-about-me-row__span', 172);
+about.createPre();
+about.eventsTextarea();
+about.defaultHeightTextarea();
+about.copyToPre();
+
+var startAutoHeight2 = function startAutoHeight2() {
+	for (var i = about.textarea.length; i--; i === 0) {
+		about.autoHeight(i);
+	}
+};
+
+// spoiler
+var spoiler = new _functions.AutoResize('plans', 'js-spoiler', 'js-spoiler__pre', 'js-spoiler__span', 112);
+spoiler.createPre();
+spoiler.eventsTextarea();
+spoiler.defaultHeightTextarea();
+spoiler.copyToPre();
+
+var startAutoHeight3 = function startAutoHeight3() {
+	for (var i = spoiler.textarea.length; i--; i === 0) {
+		spoiler.autoHeight(i);
+	}
+};
+
+// slider
+var sliderTrack = document.querySelector('.js-slider__track');
+var sliderAppendPlace = document.querySelector('.js-handle-cell');
+var jsExperienceLevel = document.querySelectorAll('.point-title');
+var levelPoints = [0, 150, 376, 770];
+
+var slider = function slider(position) {
+	noUiSlider.create(sliderAppendPlace, {
+		start: 400,
+		connect: true,
+		orientation: position,
+		range: { min: 0, max: 770 }
+	});
+
+	var rangeValue = document.querySelector('.js-range-value');
+	sliderAppendPlace.noUiSlider.on('update', function (values, handle) {
+		rangeValue.value = Math.round(values[handle] * 100 / 770) + ' %';
+	});
+};
+
+var level = function level(it) {
+	sliderAppendPlace.noUiSlider.set(levelPoints[it]);
+};
+
+// on slider point click
+
+var _loop = function _loop(i) {
+	jsExperienceLevel[i].addEventListener('click', function () {
+		level(i);
+	});
+};
+
+for (var i = jsExperienceLevel.length; i--; i === 0) {
+	_loop(i);
+}
+
+var reinitSlider = function reinitSlider(position) {
+	if (sliderAppendPlace) {
+		sliderAppendPlace.parentElement.removeChild(sliderAppendPlace);
+		var sliderAppendPlaceCreate = document.createElement('div');
+		sliderAppendPlaceCreate.className = 'handle-cell js-handle-cell';
+		sliderTrack.appendChild(sliderAppendPlaceCreate);
+		sliderAppendPlace = document.querySelector('.js-handle-cell');
+		setTimeout(function () {
+			slider(position);
+		}, 100);
+	}
+};
+
+var large = true;
+var resizeWindow = function resizeWindow() {
+	if (window.innerWidth < 780) {
+		if (large === true) {
+			reinitSlider('vertical');
+			large = false;
+		}
+	} else if (large === false) {
+		reinitSlider('horizontal');
+		large = true;
+	}
+};
+
+document.addEventListener('DOMContentLoaded', function () {
+	startAutoHeight();
+	startAutoHeight2();
+	startAutoHeight3();
+	if (window.innerWidth < 780) {
+		slider('vertical');
+	} else {
+		slider('horizontal');
+	}
+});
+
+window.addEventListener('resize', function () {
+	startAutoHeight();
+	startAutoHeight2();
+	startAutoHeight3();
+	resizeWindow();
+});
+
+(0, _jquery2.default)(function () {
+	(0, _svg4everybody2.default)();
+
+	// open and close hide text field
+	var spoilerHeight = void 0;
+	var radioDetect = function radioDetect() {
+		spoilerHeight = document.querySelector('.js-spoiler-textarea').scrollHeight;
+		if (document.querySelector('.js-radio__input:checked').value === 'Другое') {
+			(0, _jquery2.default)('.js-spoiler').stop().animate({ minHeight: spoilerHeight, height: 'auto' }, 300, function () {
+				(0, _jquery2.default)('.js-spoiler').css({ minHeight: 'auto', height: 'auto' });
+			});
+		} else {
+			(0, _jquery2.default)('.js-spoiler').stop().animate({ minHeight: 0, height: 0 }, 300, function () {});
+		}
+	};
+
+	var plansRadio = document.querySelectorAll('.js-radio__input');
+	spoilerHeight = document.querySelector('.js-spoiler-textarea').scrollHeight;
+	for (var i = plansRadio.length; i--; i === 0) {
+		plansRadio[i].addEventListener('change', function () {
+			radioDetect();
+		});
+	}
+
+	radioDetect();
+
+	var label = document.querySelector('.js-date__label');
+	var inputarea = document.querySelector('.js-date__input');
+	var getter = document.querySelector('.js-date__getter');
+	var eventsList = ['input', 'propertychange', 'keyup', 'change', 'keydown', 'keypress'];
+
+	label.addEventListener('click', function () {
+		inputarea.focus();
+	});
+
+	for (var j = eventsList.length; j--; j === 0) {
+		inputarea.addEventListener(eventsList[j], function () {
+			getter.value = inputarea.innerHTML;
+		});
+	}
+});
